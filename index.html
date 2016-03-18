@@ -1,8 +1,37 @@
 <!doctype html>
-<html>
+<html ng-app="foundationDemoApp">
   <head>
+    <script src="/node_modules/angular/angular.js"></script>
+    <script src="/node_modules/angular-foundation/mm-foundation-tpls-0.8.0.js"></script>
+    <script src="example.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.css" rel="stylesheet">
   </head>
   <body>
-    <img src="Link.png"/>
+
+    <div class="row">
+      <div class="small-12.columns">
+<div ng-controller="ButtonsCtrl">
+    <h4>Single toggle</h4>
+    <pre>{{singleModel}}</pre>
+    <button type="button" class="button" ng-model="singleModel" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+        Single Toggle
+    </button>
+    <h4>Checkbox</h4>
+    <pre>{{checkModel}}</pre>
+    <div class="button-group">
+        <button type="button" class="button" ng-model="checkModel.left" btn-checkbox>Left</button>
+        <button type="button" class="button" ng-model="checkModel.middle" btn-checkbox>Middle</button>
+        <button type="button" class="button" ng-model="checkModel.right" btn-checkbox>Right</button>
+    </div>
+    <h4>Radio</h4>
+    <pre>{{radioModel}}</pre>
+    <div class="button-group">
+        <button type="button" class="button" ng-model="radioModel" btn-radio="'Left'">Left</button>
+        <button type="button" class="button" ng-model="radioModel" btn-radio="'Middle'">Middle</button>
+        <button type="button" class="button" ng-model="radioModel" btn-radio="'Right'">Right</button>
+    </div>
+</div>
+      </div>
+    </div>
   </body>
 </html>
