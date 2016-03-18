@@ -1,0 +1,15 @@
+{
+  "author": "Alexander Kuvaev",
+  "name": "pathfind_2016",
+  "version": "0.0.1",
+  "homepage": "http://vinatorul.github.io/Pathfind2016/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Vinatorul/Pathfind2016.git"
+  },
+  "dependencies": {
+    "angular": "^1.5",
+    "angular-foundation": "^0.8"
+  },
+  "license": "MIT"
+}

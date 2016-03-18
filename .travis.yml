@@ -1,0 +1,27 @@
+language: node_js
+node_js:
+- '4'
+branches:
+  only:
+    - master
+before_script:
+    - git config --global user.email "alexander@kuvaev.me"
+    - git config --global user.name "Alexander Kuvaev"
+script:
+    - |
+      npm install && echo https://github.com/${TRAVIS_REPO_SLUG}.git
+after_success:
+    - |
+      git clone --depth=50 --branch=gh-pages https://github.com/${TRAVIS_REPO_SLUG}.git deploy &&
+      mv index.html deploy/index.html -f &&
+      rsync -a node_modules deploy/node_modules &&
+      mv example.js deploy/example.js -f &&
+      cd deploy &&
+      git add example.js index.html node_modules/ &&
+      git commit -m "Deploy build ${TRAVIS_BUILD_NUMBER}" &&
+      git push https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
+notifications:
+  email: false
+env:
+  global:
+    secure: m8gsDWgSvNNRQDXQQnjhL9UAQtwCuMRUNj0+tQ1fSD7JJepyYfms7zrTOB2/sfh5pt8R4m+vSioi/NymhV0BRaks71P8XIEyVQ58xFccANEkWjQ6SJW+KdbvmeYYkqC3vkZuvnBxb1/6fQuYwX/Y1NtGDkB51QOYJenhyQ+L1st3/Kvf7iiZ8RTFxhbAy1xbCYLScLpbzOZf/z4JQg8LRYr2B+y0eXngfU0qyL9E6aqFZSswxuK3wFVYAoQVi1pxKaFNTyEWdIEhuVDkd9p89L1p0ZLPItOnsTEy44sBzcbee2QAOF896/7Nffi6j6+Wl5e+HCFl4dRKu1WQd0oplYfv6hDDMXh6Ed/vXsTr6YinbfgUnX2zt03nEyEeCxfm3/BHKqBNKT+IPIT2wUUONDCvkFeFZRiFDLq/0inenrBMWf+9qNo1gqiIgpE8AGMpKXoNpvCYoKh2Hi7/n2ojqRmhLngG9hxNhYCcGQJJktK7NMlxiZG7/NMg8Odnn5UVsH1Yow8DiRG3+DctOU4VWKHi3IuW7xFVhjUuT24q47UqzchVC8JUuscligO+4VThDXWIOgFWD/yXzNeasuIS36FjG9KB3w8JTqlLaZ0B/ep7PLKVyLP5B7X+UTTelRuBWeL+kOTeG4S+u3qUGVEPuBPYsW/JVyLzf/suPoZYW3A=
