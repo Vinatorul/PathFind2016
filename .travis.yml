@@ -9,9 +9,7 @@ before_script:
     - git config --global user.name "Alexander Kuvaev"
 script:
     - |
-      npm install && echo https://github.com/${TRAVIS_REPO_SLUG}.git
-after_success:
-    - |
+      npm install &&
       git clone --depth=50 --branch=gh-pages https://github.com/${TRAVIS_REPO_SLUG}.git deploy &&
       mv -t deploy index.html example.js -f &&
       rsync -a node_modules deploy &&
