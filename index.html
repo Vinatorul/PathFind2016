@@ -1,36 +1,21 @@
 <!doctype html>
-<html ng-app="foundationDemoApp">
+<html ng-app="pathFind2016">
   <head>
     <script src="/Pathfind2016/node_modules/angular/angular.js"></script>
     <script src="/Pathfind2016/node_modules/angular-foundation/mm-foundation-tpls.js"></script>
     <script src="example.js"></script>
     <link href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.min.css" />
+    <!--[if lt IE 9]>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.ie.min.css" />
+    <![endif]-->
   </head>
   <body>
-
+    <a class="github-fork-ribbon" href="https://github.com/Vinatorul/Pathfind2016" title="Fork me on GitHub">Fork me on GitHub</a>
     <div class="row">
-      <div class="small-12.columns">
-<div ng-controller="ButtonsCtrl">
-    <h4>Single toggle</h4>
-    <pre>{{singleModel}}</pre>
-    <button type="button" class="button" ng-model="singleModel" btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
-        Single Toggle
-    </button>
-    <h4>Checkbox</h4>
-    <pre>{{checkModel}}</pre>
-    <div class="button-group">
-        <button type="button" class="button" ng-model="checkModel.left" btn-checkbox>Left</button>
-        <button type="button" class="button" ng-model="checkModel.middle" btn-checkbox>Middle</button>
-        <button type="button" class="button" ng-model="checkModel.right" btn-checkbox>Right</button>
-    </div>
-    <h4>Radio</h4>
-    <pre>{{radioModel}}</pre>
-    <div class="button-group">
-        <button type="button" class="button" ng-model="radioModel" btn-radio="'Left'">Left</button>
-        <button type="button" class="button" ng-model="radioModel" btn-radio="'Middle'">Middle</button>
-        <button type="button" class="button" ng-model="radioModel" btn-radio="'Right'">Right</button>
-    </div>
-</div>
+      <div class="columns">
+        <img src="Link.png"/>
+        <p class="panel">Check out at <a href="http://vinatorul.github.io/Pathfind2016/">github.com/Vinatorul/Pathfind2016<a></p>
       </div>
     </div>
   </body>
