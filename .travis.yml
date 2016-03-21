@@ -11,10 +11,12 @@ script:
     - |
       npm install &&
       git clone --depth=50 --branch=gh-pages https://github.com/${TRAVIS_REPO_SLUG}.git deploy &&
-      mv -t deploy index.html example.js -f &&
-      rsync -a node_modules deploy &&
+      mv -t deploy index.html -f &&
+      rsync -a node_modules/ deploy/js &&
+      rsync -a css deploy &&
+      rsync -a js deploy &&
       cd deploy &&
-      git add example.js index.html node_modules/ &&
+      git add index.html js css &&
       git commit -m "Deploy build ${TRAVIS_BUILD_NUMBER}" &&
       git push https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
 notifications:
