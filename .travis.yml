@@ -12,9 +12,9 @@ script:
       npm install &&
       git clone --depth=50 --branch=gh-pages https://github.com/${TRAVIS_REPO_SLUG}.git deploy &&
       mv -t deploy index.html -f &&
-      rsync -a node_modules/ deploy/js --delete &&
-      rsync -a css deploy --delete &&
-      rsync -a assets deploy --delete &&
+      rsync -a node_modules/ deploy/js --delete-before &&
+      rsync -a css deploy --delete-before &&
+      rsync -a assets deploy --delete-before &&
       rsync -a js deploy  &&
       cd deploy &&
       git add index.html js css assets &&
