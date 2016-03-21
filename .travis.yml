@@ -18,7 +18,7 @@ script:
       rsync -a js deploy  &&
       cd deploy &&
       git add index.html js css assets &&
-      git rm $(git ls-files --deleted) &&
+      if [ "$(git ls-files --deleted)" != "" ]; then git rm $(git ls-files --deleted); fi &&
       git commit -m "Deploy build ${TRAVIS_BUILD_NUMBER}" &&
       git push https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
 notifications:
