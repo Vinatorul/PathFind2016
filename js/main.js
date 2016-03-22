@@ -16,12 +16,16 @@ app.controller('CanvasCtrl', function($scope) {
     $scope.data = [
         new Node(50, 150),
         new Node(100, 140),
-        new Node(210, 150),
-        new Node(105, 90),
-        new Node(200, 105),
+        new Node(205, 150),
+        new Node(105, 85),
+        new Node(200, 90),
         new Node(200, 300),
         new Node(100, 250),
         new Node(200, 250),
+        new Node(280, 255),
+        new Node(240, 155),
+        new Node(275, 95),
+        new Node(274, 75),
     ];
 
     function connect(ind1, ind2) {
@@ -74,6 +78,11 @@ app.controller('CanvasCtrl', function($scope) {
     connect(1, 6);
     connect(6, 7);
     connect(3, 4);
+    connect(4, 10);
+    connect(2, 9);
+    connect(8, 10);
+    connect(7, 8);
+    connect(10, 11);
 
     canvas.width = 800;
     canvas.height = 600;
