@@ -23,12 +23,12 @@ script:
       git add index.html js css assets &&
       if [ "$(git ls-files --deleted)" != "" ]; 
       then
-        echo "=============="$'\n'"Removed files:"$'\n'$(git ls-files --deleted)"$'\n'"==============" && 
+        echo "=============="$'\n'"Removed files:"$'\n'"$(git ls-files --deleted)"$'\n'"==============" && 
         git rm $(git ls-files --deleted); 
       fi &&
       if [ "$(git diff --cached --name-only)" != "" ];
       then
-        echo "=============="$'\n'"Changed files:"$'\n'$(git diff --cached --name-only)"$'\n'"==============" &&
+        echo "=============="$'\n'"Changed files:"$'\n'"$(git diff --cached --name-only)"$'\n'"==============" &&
         git commit -m "Deployment of the build ${TRAVIS_BUILD_NUMBER}" &&
         git push https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages;
       else
