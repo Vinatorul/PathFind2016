@@ -30,7 +30,8 @@ script:
       then
         echo "=============="$'\n'"Changed files:"$'\n'"$(git diff --cached --name-only)"$'\n'"==============" &&
         git commit -m "Deployment of the build ${TRAVIS_BUILD_NUMBER}" &&
-        git push https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages;
+        git push https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages && 
+        echo "=============="$'\n'"Deployment number ${TRAVIS_BUILD_NUMBER} finished well!"$'\n'"==============";
       else
         echo "=============="$'\n'"Nothing to commit, deployment aborted."$'\n'"==============";
       fi
