@@ -15,32 +15,27 @@ app.controller('CanvasCtrl', function($scope) {
 
     $scope.data = [
         new Node(50, 150),
-        new Node(100, 150),
-        new Node(200, 150),
-        new Node(100, 100),
-        new Node(200, 100),
+        new Node(100, 140),
+        new Node(210, 150),
+        new Node(105, 90),
+        new Node(200, 105),
         new Node(200, 300),
         new Node(100, 250),
         new Node(200, 250),
     ];
 
-    $scope.data[0].addSibling(1);
-    $scope.data[1].addSibling(2);
-    $scope.data[3].addSibling(1);
-    $scope.data[4].addSibling(2);
-    $scope.data[5].addSibling(2);
-    $scope.data[6].addSibling(1);
-    $scope.data[7].addSibling(1);
-    $scope.data[7].addSibling(6);
-    $scope.data[4].addSibling(3);
+    function connect(ind1, ind2) {
+        $scope.data[ind1].addSibling(ind2);
+        $scope.data[ind2].addSibling(ind1);
+    } 
 
     function drawNode(node) {
         context.beginPath();
-        context.arc(node.x, node.y, 5, 0, 2*Math.PI, false);
-        context.fillStyle = "#ccddff";
+        context.arc(node.x, node.y, 9, 0, 2*Math.PI, false);
+        context.fillStyle = "#bbccdd";
         context.fill();
-        context.lineWidth = 1;
-        context.strokeStyle = "#666666";
+        context.lineWidth = 2;
+        context.strokeStyle = "#black";
         context.stroke();
     }
 
@@ -54,18 +49,31 @@ app.controller('CanvasCtrl', function($scope) {
     }
 
     function draw(data) {
-        data.forEach(function (node) {
-            for(var i=0; i<node.siblings.length; i++) {
-                drawConnection(node, data[node.siblings[i]], "black", 20);
+        for(var i=0; i<data.length; i++) {
+            for(var j=0; j<data[i].siblings.length; j++) {
+                if (data[i].siblings[j] > i) {
+                    drawConnection(data[i], data[data[i].siblings[j]], "#black", 20);
+                }
             }
-        });
-        data.forEach(function (node) {
-            for(var i=0; i<node.siblings.length; i++) {
-                drawConnection(node, data[node.siblings[i]], "#bbccdd", 16);
-            }
-        });
+        }
         data.forEach(drawNode);
+        for(var i=0; i<data.length; i++) {
+            for(var j=0; j<data[i].siblings.length; j++) {
+                if (data[i].siblings[j] > i) {
+                    drawConnection(data[i], data[data[i].siblings[j]], "#bbccdd", 16);
+                }
+            }
+        }
     }
+
+    connect(0, 1);
+    connect(1, 2);
+    connect(1, 3);
+    connect(2, 4);
+    connect(2, 5);
+    connect(1, 6);
+    connect(6, 7);
+    connect(3, 4);
 
     canvas.width = 800;
     canvas.height = 600;
