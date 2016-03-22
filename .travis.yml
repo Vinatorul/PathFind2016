@@ -10,24 +10,29 @@ before_script:
 script:
     - |
       npm install &&
+      echo "=============="$'\n'"Starting deployment"$'\n'"==============" &&
       git clone --depth=50 --branch=gh-pages https://github.com/${TRAVIS_REPO_SLUG}.git deploy &&
+      echo "=============="$'\n'"Sync started"$'\n'"==============" &&
       mv -t deploy index.html -f &&
       rsync -a node_modules/ deploy/js --delete-before &&
       rsync -a css deploy --delete-before &&
       rsync -a assets deploy --delete-before &&
       rsync -a js deploy  &&
+      echo "=============="$'\n'"Sync complited"$'\n'"==============" &&
       cd deploy &&
       git add index.html js css assets &&
       if [ "$(git ls-files --deleted)" != "" ]; 
       then
+        echo "=============="$'\n'"Removed files:"$'\n'$(git ls-files --deleted)"$'\n'"==============" && 
         git rm $(git ls-files --deleted); 
       fi &&
       if [ "$(git diff --cached --name-only)" != "" ];
       then
-        git commit -m "Deploy build ${TRAVIS_BUILD_NUMBER}" &&
+        echo "=============="$'\n'"Changed files:"$'\n'$(git diff --cached --name-only)"$'\n'"==============" &&
+        git commit -m "Deployment of the build ${TRAVIS_BUILD_NUMBER}" &&
         git push https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages;
       else
-        echo "Nothing to commit, deploy aborted.";
+        echo "=============="$'\n'"Nothing to commit, deployment aborted."$'\n'"==============";
       fi
 notifications:
   email: false
