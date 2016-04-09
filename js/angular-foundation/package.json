@@ -35,7 +35,7 @@
   },
   "dist": {
     "shasum": "52a20d573391f39ef10cb0825f59bd1e7ffa739f",
-    "tarball": "http://registry.npmjs.org/angular-foundation/-/angular-foundation-0.8.0.tgz"
+    "tarball": "https://registry.npmjs.org/angular-foundation/-/angular-foundation-0.8.0.tgz"
   },
   "maintainers": [
     {

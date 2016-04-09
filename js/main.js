@@ -29,18 +29,20 @@ app.controller('CanvasCtrl', function($scope) {
         new Node(350, 260),
     ];
 
+    $scope.path = [];
+
     function connect(ind1, ind2) {
         $scope.data[ind1].addSibling(ind2);
         $scope.data[ind2].addSibling(ind1);
     } 
 
-    function drawNode(node) {
+    function drawNode(node, bgcolor, color) {
         context.beginPath();
         context.arc(node.x, node.y, 9, 0, 2*Math.PI, false);
-        context.fillStyle = "#bbccdd";
+        context.fillStyle = color;
         context.fill();
         context.lineWidth = 2;
-        context.strokeStyle = "#black";
+        context.strokeStyle = bgcolor;
         context.stroke();
     }
 
@@ -53,22 +55,84 @@ app.controller('CanvasCtrl', function($scope) {
         context.stroke();
     }
 
-    function draw(data) {
+    function draw(data, path) {
+        console.log(path);
         for(var i=0; i<data.length; i++) {
             for(var j=0; j<data[i].siblings.length; j++) {
                 if (data[i].siblings[j] > i) {
-                    drawConnection(data[i], data[data[i].siblings[j]], "#black", 20);
+                    var color = "#000000" 
+                    drawConnection(data[i], data[data[i].siblings[j]], color, 20);
                 }
             }
         }
-        data.forEach(drawNode);
+        data.forEach(function (node) {
+            drawNode(node, "#000000", "#bbccdd");
+        });
         for(var i=0; i<data.length; i++) {
             for(var j=0; j<data[i].siblings.length; j++) {
                 if (data[i].siblings[j] > i) {
-                    drawConnection(data[i], data[data[i].siblings[j]], "#bbccdd", 16);
+                    var color = "#bbccdd" 
+                    drawConnection(data[i], data[data[i].siblings[j]], color, 16);
                 }
             }
         }
+
+        for(var i=0; i<data.length; i++) {
+            for(var j=0; j<data[i].siblings.length; j++) {
+                if ((data[i].siblings[j] > i) && (path.indexOf(i) >= 0) && (path.indexOf(data[i].siblings[j]) >= 0)) {
+                    drawConnection(data[i], data[data[i].siblings[j]], "#FF0000", 20);
+                }
+            }
+        }
+        for(var i=0; i<data.length; i++) {
+            if (path.indexOf(i) >= 0) {
+                drawNode(data[i], "#FF0000", "#FF0000");
+            }
+        }
+        for(var i=0; i<data.length; i++) {
+            for(var j=0; j<data[i].siblings.length; j++) {
+                if ((data[i].siblings[j] > i) && (path.indexOf(i) >= 0) && (path.indexOf(data[i].siblings[j]) >= 0)) {
+                    drawConnection(data[i], data[data[i].siblings[j]], "#FF0000", 16);
+                }
+            }
+        }
+    }
+
+    function getLength(data, i, j) {
+        return Math.sqrt((data[i].x - data[j].x)*(data[i].x - data[j].x) +
+            (data[i].y - data[j].y)*(data[i].y - data[j].y));
+    }
+
+    function findPath(data, start, end) {
+        var queue = [];
+        var nodes = [];
+        data.forEach(function (elem) {nodes.push({len: -1, parent: -1})});
+        queue.push(start);
+        nodes[start].len = 0;
+        while (queue.length > 0) {
+            var i = queue.shift();
+            data[i].siblings.forEach(
+                function(j) {
+                    var len = getLength(data, i, j);
+                    console.log(j);
+                    if ((nodes[j].len < 0) || (nodes[j].len > len + nodes[i].len)) {
+                        queue.push(j);
+                        nodes[j].len = nodes[i].len + len;
+                        nodes[j].parent = i;
+                        console.log(i + " " + j);
+                    }
+                }
+            );
+        }
+        console.log(nodes[end].len);
+        var path = [];
+        var parent = nodes[end].parent;
+        while (parent != -1) {
+            path.push(parent);
+            parent = nodes[parent].parent;
+            console.log(parent);
+        }   
+        return path;
     }
 
     connect(0, 1);
@@ -86,9 +150,11 @@ app.controller('CanvasCtrl', function($scope) {
     connect(10, 11);
     connect(8, 12);
 
+    $scope.path = findPath($scope.data, 0, 12);
+
     canvas.width = 800;
     canvas.height = 600;
     context.globalAlpha = 1.0;
     context.beginPath();
-    draw($scope.data);
+    draw($scope.data, $scope.path);
 });
