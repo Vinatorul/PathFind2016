@@ -18,12 +18,16 @@
       </div>
       <div ng-controller="CanvasCtrl" class="row">
         <div class="medium-9 columns">
-          <div class = "panel">
-            <canvas id="canvas"></canvas>
+          <div class = "panel" style="height:500px">
+            <canvas id="canvas" ng-click="procClick($event)"></canvas>
           </div>
         </div>
         <div class="medium-3 columns text-center">
           <div class="panel">
+            <form name="params">
+              <input type="radio" ng-model="param.type" value="1">Set start (blue color)<br/>
+              <input type="radio" ng-model="param.type" value="2">Set end (green color)<br/>
+            </form>
             <div>
               <p><img src="assets/Link.png"/></p>
             </div>
@@ -31,6 +35,7 @@
         </div>
       </div>
       <div class="row text-center">
+        
         <h3>Check online on <a href="http://vinatorul.github.io/PathFind2016/">vinatorul.github.io/PathFind2016</a></h3>
       </div>
     </div>
