@@ -7,8 +7,8 @@ app.controller('CanvasCtrl', function($scope) {
     var end = -1;
     const asphalt = 1;
     const dirt = 2;
-    const asphaltColor = "#877e70";
-    const dirtColor = "#c7b446";
+    const asphaltColor = "#fff86b";
+    const dirtColor = "#8f7f42";
 
     function Node(x, y) {
         this.x = x;
@@ -105,7 +105,7 @@ app.controller('CanvasCtrl', function($scope) {
         for (var i=0; i < path.length - 1; i++) {
             drawConnection(data[path[i]], data[path[i+1]], "#000000", 20);
         }
-        for (var i=0; i < path.length; i++) {
+        for (var i=0; i < path.length - 1; i++) {
             drawNode(data[path[i]], "#000000", "#FF0000", 9);
         }
         for (var i=0; i < path.length - 1; i++) {
