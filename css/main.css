@@ -6,3 +6,7 @@
     z-index: 999;
     height: 150px;
 }
+
+#canvas-holder {
+	background: #f7f7c1;
+}
