@@ -8,7 +8,7 @@ app.controller('CanvasCtrl', function($scope) {
     const asphalt = 1;
     const dirt = 2;
     const asphaltColor = "#877e70";
-    const dirtColor = "#8f7f42";
+    const dirtColor = "#c7b446";
 
     function Node(x, y) {
         this.x = x;
