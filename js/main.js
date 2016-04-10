@@ -5,14 +5,18 @@ app.controller('CanvasCtrl', function($scope) {
     var context = canvas.getContext('2d');
     var start = -1;
     var end = -1;
+    const asphalt = 1;
+    const dirt = 2;
+    const asphaltColor = "#877e70";
+    const dirtColor = "#8f7f42";
 
     function Node(x, y) {
         this.x = x;
         this.y = y;
         this.siblings = [];
     }
-    Node.prototype.addSibling = function(i) {
-        this.siblings.push(i);
+    Node.prototype.addSibling = function(i, type) {
+        this.siblings.push({ind: i, type: type});
     }
 
     $scope.data = [
@@ -37,9 +41,9 @@ app.controller('CanvasCtrl', function($scope) {
     }
 
 
-    function connect(ind1, ind2) {
-        $scope.data[ind1].addSibling(ind2);
-        $scope.data[ind2].addSibling(ind1);
+    function connect(ind1, ind2, type) {
+        $scope.data[ind1].addSibling(ind2, type);
+        $scope.data[ind2].addSibling(ind1, type);
     } 
 
     function drawNode(node, bgcolor, color, width) {
@@ -64,42 +68,48 @@ app.controller('CanvasCtrl', function($scope) {
     function draw(data, path) {
         for(var i=0; i<data.length; i++) {
             for(var j=0; j<data[i].siblings.length; j++) {
-                if (data[i].siblings[j] > i) {
+                if (data[i].siblings[j].ind > i) {
                     var color = "#000000" 
-                    drawConnection(data[i], data[data[i].siblings[j]], color, 20);
+                    drawConnection(data[i], data[data[i].siblings[j].ind], color, 20);
                 }
             }
         }
         data.forEach(function (node) {
-            drawNode(node, "#000000", "#bbccdd", 9);
+            var color = dirtColor;
+            for(var i=0; i<node.siblings.length; i++) { 
+                if (node.siblings[i].type == asphalt) {
+                    color = asphaltColor;
+                    break;
+                }
+            }
+            drawNode(node, "#000000", color, 9);
         });
         for(var i=0; i<data.length; i++) {
             for(var j=0; j<data[i].siblings.length; j++) {
-                if (data[i].siblings[j] > i) {
-                    var color = "#bbccdd" 
-                    drawConnection(data[i], data[data[i].siblings[j]], color, 16);
+                if (data[i].siblings[j].ind > i) {
+                    var color = "";
+                    switch (data[i].siblings[j].type) {
+                        case asphalt: 
+                            color = asphaltColor;
+                        break;
+                        case dirt:
+                            color = dirtColor;
+                        break;
+                    }
+                    
+                    drawConnection(data[i], data[data[i].siblings[j].ind], color, 16);
                 }
             }
         }
 
-        for(var i=0; i<data.length; i++) {
-            for(var j=0; j<data[i].siblings.length; j++) {
-                if ((data[i].siblings[j] > i) && (path.indexOf(i) >= 0) && (path.indexOf(data[i].siblings[j]) >= 0)) {
-                    drawConnection(data[i], data[data[i].siblings[j]], "#000000", 20);
-                }
-            }
+        for (var i=0; i < path.length - 1; i++) {
+            drawConnection(data[path[i]], data[path[i+1]], "#000000", 20);
         }
-        for(var i=0; i<data.length; i++) {
-            if (path.indexOf(i) >= 0) {
-                drawNode(data[i], "#000000", "#FF0000", 9);
-            }
+        for (var i=0; i < path.length; i++) {
+            drawNode(data[path[i]], "#000000", "#FF0000", 9);
         }
-        for(var i=0; i<data.length; i++) {
-            for(var j=0; j<data[i].siblings.length; j++) {
-                if ((data[i].siblings[j] > i) && (path.indexOf(i) >= 0) && (path.indexOf(data[i].siblings[j]) >= 0)) {
-                    drawConnection(data[i], data[data[i].siblings[j]], "#FF0000", 16);
-                }
-            }
+        for (var i=0; i < path.length - 1; i++) {
+            drawConnection(data[path[i]], data[path[i+1]], "#FF0000", 16);
         }
 
         for(var i=0; i<data.length; i++) {
@@ -115,7 +125,21 @@ app.controller('CanvasCtrl', function($scope) {
     }
 
     function getLength(data, i, j) {
-        return Math.sqrt((data[i].x - data[j].x)*(data[i].x - data[j].x) +
+        var coeff = 1;
+        for(var k=0; k<data[i].siblings.length; k++) {
+            if (data[i].siblings[k].ind == j) {
+                switch(data[i].siblings[k].type) {
+                    case asphalt: 
+                        coeff = 1;
+                        break;
+                    case dirt:
+                        coeff = 10;
+                        break;
+                }
+                break;
+            }
+        }
+        return coeff*Math.sqrt((data[i].x - data[j].x)*(data[i].x - data[j].x) +
             (data[i].y - data[j].y)*(data[i].y - data[j].y));
     }
 
@@ -128,7 +152,8 @@ app.controller('CanvasCtrl', function($scope) {
         while (queue.length > 0) {
             var i = queue.shift();
             data[i].siblings.forEach(
-                function(j) {
+                function(s) {
+                    var j = s.ind;
                     var len = getLength(data, i, j);
                     if ((nodes[j].len < 0) || (nodes[j].len > len + nodes[i].len)) {
                         queue.push(j);
@@ -144,6 +169,7 @@ app.controller('CanvasCtrl', function($scope) {
             path.push(parent);
             parent = nodes[parent].parent;
         }   
+        console.log(path);
         return path;
     }
 
@@ -183,21 +209,21 @@ app.controller('CanvasCtrl', function($scope) {
         }
     }
 
-    connect(0, 1);
-    connect(1, 2);
-    connect(1, 3);
-    connect(2, 4);
-    connect(2, 7);
-    connect(7, 5);
-    connect(1, 6);
-    connect(6, 7);
-    connect(3, 4);
-    connect(4, 10);
-    connect(2, 9);
-    connect(8, 10);
-    connect(7, 8);
-    connect(10, 11);
-    connect(8, 12);
+    connect(0, 1, asphalt);
+    connect(1, 2, asphalt);
+    connect(1, 3, asphalt);
+    connect(2, 4, dirt);
+    connect(2, 7, asphalt);
+    connect(7, 5, asphalt);
+    connect(1, 6, asphalt);
+    connect(6, 7, asphalt);
+    connect(3, 4, asphalt);
+    connect(4, 10, asphalt);
+    connect(2, 9, asphalt);
+    connect(8, 10, asphalt);
+    connect(7, 8, asphalt);
+    connect(10, 11, asphalt);
+    connect(8, 12, asphalt);
 
     context.globalAlpha = 1.0;
     context.beginPath();
