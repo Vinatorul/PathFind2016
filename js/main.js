@@ -3,6 +3,8 @@ var app = angular.module('pathFind2016', ['mm.foundation']);
 app.controller('CanvasCtrl', function($scope) {
     var canvas = document.getElementById('canvas');
     var context = canvas.getContext('2d');
+    var start = -1;
+    var end = -1;
 
     function Node(x, y) {
         this.x = x;
@@ -30,15 +32,19 @@ app.controller('CanvasCtrl', function($scope) {
     ];
 
     $scope.path = [];
+    $scope.param = {
+        type: "1"
+    }
+
 
     function connect(ind1, ind2) {
         $scope.data[ind1].addSibling(ind2);
         $scope.data[ind2].addSibling(ind1);
     } 
 
-    function drawNode(node, bgcolor, color) {
+    function drawNode(node, bgcolor, color, width) {
         context.beginPath();
-        context.arc(node.x, node.y, 9, 0, 2*Math.PI, false);
+        context.arc(node.x, node.y, width, 0, 2*Math.PI, false);
         context.fillStyle = color;
         context.fill();
         context.lineWidth = 2;
@@ -56,7 +62,6 @@ app.controller('CanvasCtrl', function($scope) {
     }
 
     function draw(data, path) {
-        console.log(path);
         for(var i=0; i<data.length; i++) {
             for(var j=0; j<data[i].siblings.length; j++) {
                 if (data[i].siblings[j] > i) {
@@ -66,7 +71,7 @@ app.controller('CanvasCtrl', function($scope) {
             }
         }
         data.forEach(function (node) {
-            drawNode(node, "#000000", "#bbccdd");
+            drawNode(node, "#000000", "#bbccdd", 9);
         });
         for(var i=0; i<data.length; i++) {
             for(var j=0; j<data[i].siblings.length; j++) {
@@ -80,13 +85,13 @@ app.controller('CanvasCtrl', function($scope) {
         for(var i=0; i<data.length; i++) {
             for(var j=0; j<data[i].siblings.length; j++) {
                 if ((data[i].siblings[j] > i) && (path.indexOf(i) >= 0) && (path.indexOf(data[i].siblings[j]) >= 0)) {
-                    drawConnection(data[i], data[data[i].siblings[j]], "#FF0000", 20);
+                    drawConnection(data[i], data[data[i].siblings[j]], "#000000", 20);
                 }
             }
         }
         for(var i=0; i<data.length; i++) {
             if (path.indexOf(i) >= 0) {
-                drawNode(data[i], "#FF0000", "#FF0000");
+                drawNode(data[i], "#000000", "#FF0000", 9);
             }
         }
         for(var i=0; i<data.length; i++) {
@@ -95,6 +100,17 @@ app.controller('CanvasCtrl', function($scope) {
                     drawConnection(data[i], data[data[i].siblings[j]], "#FF0000", 16);
                 }
             }
+        }
+
+        for(var i=0; i<data.length; i++) {
+            var color = "#000000";
+            if (i == start) {
+                color = "#0000FF";
+            }
+            if (i == end) {
+                color = "#00FF00";
+            }
+            drawNode(data[i], color, color, 5);
         }
     }
 
@@ -114,32 +130,65 @@ app.controller('CanvasCtrl', function($scope) {
             data[i].siblings.forEach(
                 function(j) {
                     var len = getLength(data, i, j);
-                    console.log(j);
                     if ((nodes[j].len < 0) || (nodes[j].len > len + nodes[i].len)) {
                         queue.push(j);
                         nodes[j].len = nodes[i].len + len;
                         nodes[j].parent = i;
-                        console.log(i + " " + j);
                     }
                 }
             );
         }
-        console.log(nodes[end].len);
-        var path = [];
+        var path = [end];
         var parent = nodes[end].parent;
         while (parent != -1) {
             path.push(parent);
             parent = nodes[parent].parent;
-            console.log(parent);
         }   
         return path;
+    }
+
+    function nodeClicked(data, x, y) {
+        console.log(x + " " + y);
+        for(var i=0; i<data.length; i++) {
+            if ((data[i].x - 10 < x) && (data[i].x + 10 > x) &&
+                (data[i].y - 10 < y) && (data[i].y + 10 > y)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    $scope.procClick = function(event) {
+        var rect = event.srcElement.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top; 
+        var node = nodeClicked($scope.data, x, y);
+        if (node >= 0) {
+            switch ($scope.param.type) {
+                case "1": 
+                    start = node;
+                    break;
+                case "2": 
+                    end = node;
+                    break; 
+            }
+            if ((start >= 0) && (end >= 0)) {
+                console.log(start);
+                console.log(end);
+                $scope.path = findPath($scope.data, start, end);
+                
+            }
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            draw($scope.data, $scope.path);
+        }
     }
 
     connect(0, 1);
     connect(1, 2);
     connect(1, 3);
     connect(2, 4);
-    connect(2, 5);
+    connect(2, 7);
+    connect(7, 5);
     connect(1, 6);
     connect(6, 7);
     connect(3, 4);
@@ -150,11 +199,9 @@ app.controller('CanvasCtrl', function($scope) {
     connect(10, 11);
     connect(8, 12);
 
-    $scope.path = findPath($scope.data, 0, 12);
-
-    canvas.width = 800;
-    canvas.height = 600;
     context.globalAlpha = 1.0;
     context.beginPath();
+    canvas.width = 400;
+    canvas.height = 400;
     draw($scope.data, $scope.path);
 });
