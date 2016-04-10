@@ -108,7 +108,7 @@ app.controller('CanvasCtrl', function($scope) {
         for (var i=0; i < path.length - 1; i++) {
             drawNode(data[path[i]], "#000000", "#FF0000", 9);
         }
-        for (var i=0; i < path.length - 1; i++) {
+        for (var i=0; i < path.length; i++) {
             drawConnection(data[path[i]], data[path[i+1]], "#FF0000", 16);
         }
 
