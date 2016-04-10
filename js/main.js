@@ -150,8 +150,8 @@ app.controller('CanvasCtrl', function($scope) {
     function nodeClicked(data, x, y) {
         console.log(x + " " + y);
         for(var i=0; i<data.length; i++) {
-            if ((data[i].x - 10 < x) && (data[i].x + 10 > x) &&
-                (data[i].y - 10 < y) && (data[i].y + 10 > y)) {
+            if ((data[i].x - 15 < x) && (data[i].x + 15 > x) &&
+                (data[i].y - 15 < y) && (data[i].y + 15 > y)) {
                 return i;
             }
         }
