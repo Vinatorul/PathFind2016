@@ -185,7 +185,7 @@ app.controller('CanvasCtrl', function($scope) {
     }
 
     $scope.procClick = function(event) {
-        var rect = event.srcElement.getBoundingClientRect();
+        var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top; 
         var node = nodeClicked($scope.data, x, y);
