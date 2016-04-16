@@ -5,10 +5,12 @@ app.controller('CanvasCtrl', function($scope) {
     var context = canvas.getContext('2d');
     var start = -1;
     var end = -1;
-    const asphalt = "1";
-    const dirt = "2";
+    const asphalt = 1;
+    const dirt = 2;
+    const closed = 3;
     const asphaltColor = "#fff86b";
     const dirtColor = "#8f7f42";
+    const closedColor = "#000000";
 
     function Node(x, y) {
         this.x = x;
@@ -36,12 +38,10 @@ app.controller('CanvasCtrl', function($scope) {
     ];
 
     $scope.path = [];
-    $scope.param = {
-        type: "1"
-    }
+    $scope.paramType = 1;
 
     $scope.road = {
-        type: "1"
+        type: 1
     }
 
     function connect(ind1, ind2, type) {
@@ -98,6 +98,9 @@ app.controller('CanvasCtrl', function($scope) {
                         case dirt:
                             color = dirtColor;
                         break;
+                        case closed:
+                            color = closedColor;
+                        break;
                     }
                     
                     drawConnection(data[i], data[data[i].siblings[j].ind], color, 16);
@@ -138,6 +141,9 @@ app.controller('CanvasCtrl', function($scope) {
                     case dirt:
                         coeff = 10;
                         break;
+                    case closed:
+                        coeff = 1000;
+                    break;
                 }
                 break;
             }
@@ -213,11 +219,11 @@ app.controller('CanvasCtrl', function($scope) {
         var y = event.clientY - rect.top; 
         var node = nodeClicked($scope.data, x, y);
         if (node >= 0) {
-            switch ($scope.param.type) {
-                case "1": 
+            switch ($scope.paramType) {
+                case 1: 
                     start = node;
                     break;
-                case "2": 
+                case 2: 
                     end = node;
                     break; 
             }
@@ -253,6 +259,14 @@ app.controller('CanvasCtrl', function($scope) {
                 draw($scope.data, $scope.path);
             }
         }
+    }
+
+    $scope.forgetPath = function() {
+        start = -1;
+        end = -1;
+        $scope.path = [];
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        draw($scope.data, $scope.path);
     }
 
     connect(0, 1, asphalt);
