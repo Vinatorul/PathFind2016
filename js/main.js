@@ -1,16 +1,20 @@
-var app = angular.module('pathFind2016', ['mm.foundation']);
+var app = angular.module('pathFind2016', ['mm.foundation','bzm-range-slider']);
 
 app.controller('CanvasCtrl', function($scope) {
-    var canvas = document.getElementById('canvas');
-    var context = canvas.getContext('2d');
-    var start = -1;
-    var end = -1;
     const asphalt = 1;
     const dirt = 2;
     const closed = 3;
     const asphaltColor = "#fff86b";
     const dirtColor = "#8f7f42";
     const closedColor = "#000000";
+
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+    var start = -1;
+    var end = -1;
+    var asphaltCoef = 1;
+    var dirtCoef = 10;
+    var closedCoef = 100;
 
     function Node(x, y) {
         this.x = x;
@@ -49,26 +53,26 @@ app.controller('CanvasCtrl', function($scope) {
         $scope.data[ind2].addSibling(ind1, type);
     } 
 
-    function drawNode(node, bgcolor, color, width) {
-        context.beginPath();
-        context.arc(node.x, node.y, width, 0, 2*Math.PI, false);
-        context.fillStyle = color;
-        context.fill();
-        context.lineWidth = 2;
-        context.strokeStyle = bgcolor;
-        context.stroke();
-    }
-
-    function drawConnection(node1, node2, color, width) {
-        context.beginPath();
-        context.moveTo(node1.x, node1.y);
-        context.lineTo(node2.x, node2.y);
-        context.strokeStyle = color;
-        context.lineWidth = width;
-        context.stroke();
-    }
-
     function draw(data, path) {
+        function drawNode(node, bgcolor, color, width) {
+            context.beginPath();
+            context.arc(node.x, node.y, width, 0, 2*Math.PI, false);
+            context.fillStyle = color;
+            context.fill();
+            context.lineWidth = 2;
+            context.strokeStyle = bgcolor;
+            context.stroke();
+        }
+
+        function drawConnection(node1, node2, color, width) {
+            context.beginPath();
+            context.moveTo(node1.x, node1.y);
+            context.lineTo(node2.x, node2.y);
+            context.strokeStyle = color;
+            context.lineWidth = width;
+            context.stroke();
+        }
+
         for(var i=0; i<data.length; i++) {
             for(var j=0; j<data[i].siblings.length; j++) {
                 if (data[i].siblings[j].ind > i) {
@@ -137,29 +141,33 @@ app.controller('CanvasCtrl', function($scope) {
         }
     }
 
-    function getLength(data, i, j) {
-        var coeff = 1;
-        for(var k=0; k<data[i].siblings.length; k++) {
-            if (data[i].siblings[k].ind == j) {
-                switch(data[i].siblings[k].type) {
-                    case asphalt: 
-                        coeff = 1;
-                        break;
-                    case dirt:
-                        coeff = 10;
-                        break;
-                    case closed:
-                        coeff = 1000;
-                    break;
-                }
-                break;
-            }
-        }
-        return coeff*Math.sqrt((data[i].x - data[j].x)*(data[i].x - data[j].x) +
-            (data[i].y - data[j].y)*(data[i].y - data[j].y));
-    }
 
     function findPath(data, start, end) {
+        function getLength(data, i, j) {
+            var coeff = 1;
+            for(var k=0; k<data[i].siblings.length; k++) {
+                if (data[i].siblings[k].ind == j) {
+                    switch(data[i].siblings[k].type) {
+                        case asphalt: 
+                            coeff = asphaltCoef;
+                            break;
+                        case dirt:
+                            coeff = dirtCoef;
+                            break;
+                        case closed:
+                            coeff = closedCoef;
+                        break;
+                    }
+                    break;
+                }
+            }
+            return coeff*Math.sqrt((data[i].x - data[j].x)*(data[i].x - data[j].x) +
+                (data[i].y - data[j].y)*(data[i].y - data[j].y));
+        }
+
+        if ((start < 0) || (end < 0))
+            return;
+
         var queue = [];
         var nodes = [];
         data.forEach(function (elem) {nodes.push({len: -1, parent: -1})});
@@ -185,42 +193,46 @@ app.controller('CanvasCtrl', function($scope) {
             path.push(parent);
             parent = nodes[parent].parent;
         }   
-        console.log(path);
-        return path;
+        $scope.path = path;
     }
 
-    function nodeClicked(data, x, y) {
-        // console.log(x + " " + y);
-        for(var i=0; i<data.length; i++) {
-            if ((data[i].x - 15 < x) && (data[i].x + 15 > x) &&
-                (data[i].y - 15 < y) && (data[i].y + 15 > y)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    function rodeClicked(data, x, y) {
-        for(var i=0; i<data.length; i++) {
-            for(var j=0; j<data[i].siblings.length; j++) {
-                var x1 = data[i].x;
-                var y1 = data[i].y;
-                var x2 = data[data[i].siblings[j].ind].x;               
-                var y2 = data[data[i].siblings[j].ind].y;
-                if ((x + 15 < Math.min(x1, x2)) || (x - 15 > Math.max(x1, x2)) || (y + 15 < Math.min(y1, y2)) || (y - 15 > Math.max(y1, y2)))
-                    continue;
-                var a = y2 - y1;
-                var b = x1 - x2;
-                var c = y1*x2 - x1*y2;
-                var dist = Math.abs(a*x + b*y + c)/Math.sqrt(a*a + b*b);
-                if ((dist < 15) && (dist > -15))
-                    return {start:i, end:data[i].siblings[j].ind};
-            }
-        }
-        return undefined;
+    function updateCanvas() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        draw($scope.data, $scope.path);
     }
 
     $scope.procClick = function(event) {
+        function nodeClicked(data, x, y) {
+            // console.log(x + " " + y);
+            for(var i=0; i<data.length; i++) {
+                if ((data[i].x - 15 < x) && (data[i].x + 15 > x) &&
+                    (data[i].y - 15 < y) && (data[i].y + 15 > y)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        function rodeClicked(data, x, y) {
+            for(var i=0; i<data.length; i++) {
+                for(var j=0; j<data[i].siblings.length; j++) {
+                    var x1 = data[i].x;
+                    var y1 = data[i].y;
+                    var x2 = data[data[i].siblings[j].ind].x;               
+                    var y2 = data[data[i].siblings[j].ind].y;
+                    if ((x + 15 < Math.min(x1, x2)) || (x - 15 > Math.max(x1, x2)) || (y + 15 < Math.min(y1, y2)) || (y - 15 > Math.max(y1, y2)))
+                        continue;
+                    var a = y2 - y1;
+                    var b = x1 - x2;
+                    var c = y1*x2 - x1*y2;
+                    var dist = Math.abs(a*x + b*y + c)/Math.sqrt(a*a + b*b);
+                    if ((dist < 15) && (dist > -15))
+                        return {start:i, end:data[i].siblings[j].ind};
+                }
+            }
+            return undefined;
+        }
+
         var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top; 
@@ -234,14 +246,8 @@ app.controller('CanvasCtrl', function($scope) {
                     end = node;
                     break; 
             }
-            if ((start >= 0) && (end >= 0)) {
-                console.log(start);
-                console.log(end);
-                $scope.path = findPath($scope.data, start, end);
-                
-            }
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            draw($scope.data, $scope.path);
+            findPath($scope.data, start, end);
+            updateCanvas();
         }
         else {
             var rode = rodeClicked($scope.data, x, y);
@@ -256,14 +262,8 @@ app.controller('CanvasCtrl', function($scope) {
                         $scope.data[rode.end].siblings[i].type = $scope.road.type; 
                     }
                 }
-                if ((start >= 0) && (end >= 0)) {
-                    console.log(start);
-                    console.log(end);
-                    $scope.path = findPath($scope.data, start, end);
-                    
-                }
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                draw($scope.data, $scope.path);
+                findPath($scope.data, start, end);
+                updateCanvas();
             }
         }
     }
@@ -272,8 +272,34 @@ app.controller('CanvasCtrl', function($scope) {
         start = -1;
         end = -1;
         $scope.path = [];
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        draw($scope.data, $scope.path);
+        updateCanvas();
+    }
+
+    $scope.asphaltCoefCB = function(value) {
+        asphaltCoef = value;
+        if ($scope.data) {
+            findPath($scope.data, start, end);
+            updateCanvas();
+        }
+        return value;
+    }
+
+    $scope.dirtCoefCB = function(value) {
+        dirtCoef = value;
+        if ($scope.data) {
+            findPath($scope.data, start, end);
+            updateCanvas();
+        }
+        return value;
+    }
+
+    $scope.closedCoefCB = function(value) {
+        closedCoef = value;
+        if ($scope.data) {
+            findPath($scope.data, start, end);
+            updateCanvas();
+        }
+        return value;
     }
 
     connect(0, 1, asphalt);
@@ -296,5 +322,5 @@ app.controller('CanvasCtrl', function($scope) {
     context.beginPath();
     canvas.width = 400;
     canvas.height = 400;
-    draw($scope.data, $scope.path);
+    updateCanvas();
 });

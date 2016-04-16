@@ -4,8 +4,10 @@
     <meta charset="utf-8" />
     <script src="js/angular/angular.js"></script>
     <script src="js/angular-foundation/mm-foundation-tpls.js"></script>
+    <script src="js/BzmRangeSliderMod.js"></script>
     <script src="js/main.js"></script>
     <link href="css/foundation.css" rel="stylesheet">
+    <link href="css/bzm-range-slider.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
   </head>
   <body> 
@@ -22,7 +24,7 @@
           </div>
         </div>
       <div class="row panel">
-        <div class="columns large-9 medium-9 huge-9">
+        <div class="columns large-5 medium-5 huge-5">
           <h3>Set way point</h3>
           <div class="button-group round">
             <a class="button" ng-model="paramType" btn-radio="1">Start</a>
@@ -35,10 +37,21 @@
           <div class="button-group round">
             <a class="button" ng-model="road.type" btn-radio="1">Asphalt</a>
             <a class="button" ng-model="road.type" btn-radio="2">Dirt</a>
-            <a class="button" ng-model="road.type" btn-radio="3">Closed</a>
+            <a class="button" ng-model="road.type" btn-radio="3">Closed road</a>
           </div> 
         </div>
-        <div class="columns text-center large-3 medium-3 huge-3">
+        <div class="columns large-5 medium-5 huge-5">
+          <h3>Asphalt coefficient</h3>
+          <range-slider ng-model="asphaltCoef" placeholder="Asphalt coefficient" not-less="1" not-more="100" display-target="handle" initial="1" formatter="asphaltCoefCB">
+          </range-slider>
+          <h3>Dirt coefficient</h3>
+          <range-slider ng-model="dirtCoef" placeholder="Dirt coefficient" not-less="1" not-more="100" display-target="handle" initial="10" formatter="dirtCoefCB">
+          </range-slider>
+          <h3>Closed road coefficient</h3>
+          <range-slider ng-model="closedCoef" placeholder="Closed road coefficient" not-less="1" not-more="100" display-target="handle" initial="100" formatter="closedCoefCB">
+          </range-slider>
+        </div>
+        <div class="columns text-center large-2 medium-2 huge-2">
           <p><img src="assets/Link.png"/></p>
         </div>
       </div>
