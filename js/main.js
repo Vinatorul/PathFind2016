@@ -78,10 +78,17 @@ app.controller('CanvasCtrl', function($scope) {
             }
         }
         data.forEach(function (node) {
-            var color = dirtColor;
+            var color = "";
             for(var i=0; i<node.siblings.length; i++) { 
-                if (node.siblings[i].type == asphalt) {
-                    color = asphaltColor;
+                switch (node.siblings[i].type) {
+                    case asphalt: 
+                        color = asphaltColor;
+                    break;
+                    case dirt:
+                        color = dirtColor;
+                    break;
+                    case closed:
+                        color = closedColor;
                     break;
                 }
             }
