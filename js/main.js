@@ -5,8 +5,8 @@ app.controller('CanvasCtrl', function($scope) {
     var context = canvas.getContext('2d');
     var start = -1;
     var end = -1;
-    const asphalt = 1;
-    const dirt = 2;
+    const asphalt = "1";
+    const dirt = "2";
     const asphaltColor = "#fff86b";
     const dirtColor = "#8f7f42";
 
@@ -31,7 +31,7 @@ app.controller('CanvasCtrl', function($scope) {
         new Node(280, 255),
         new Node(240, 155),
         new Node(275, 95),
-        new Node(274, 75),
+        new Node(274, 45),
         new Node(350, 260),
     ];
 
@@ -40,6 +40,9 @@ app.controller('CanvasCtrl', function($scope) {
         type: "1"
     }
 
+    $scope.road = {
+        type: "1"
+    }
 
     function connect(ind1, ind2, type) {
         $scope.data[ind1].addSibling(ind2, type);
@@ -174,7 +177,7 @@ app.controller('CanvasCtrl', function($scope) {
     }
 
     function nodeClicked(data, x, y) {
-        console.log(x + " " + y);
+        // console.log(x + " " + y);
         for(var i=0; i<data.length; i++) {
             if ((data[i].x - 15 < x) && (data[i].x + 15 > x) &&
                 (data[i].y - 15 < y) && (data[i].y + 15 > y)) {
@@ -182,6 +185,26 @@ app.controller('CanvasCtrl', function($scope) {
             }
         }
         return -1;
+    }
+
+    function rodeClicked(data, x, y) {
+        for(var i=0; i<data.length; i++) {
+            for(var j=0; j<data[i].siblings.length; j++) {
+                var x1 = data[i].x;
+                var y1 = data[i].y;
+                var x2 = data[data[i].siblings[j].ind].x;               
+                var y2 = data[data[i].siblings[j].ind].y;
+                if ((x + 15 < Math.min(x1, x2)) || (x - 15 > Math.max(x1, x2)) || (y + 15 < Math.min(y1, y2)) || (y - 15 > Math.max(y1, y2)))
+                    continue;
+                var a = y2 - y1;
+                var b = x1 - x2;
+                var c = y1*x2 - x1*y2;
+                var dist = Math.abs(a*x + b*y + c)/Math.sqrt(a*a + b*b);
+                if ((dist < 15) && (dist > -15))
+                    return {start:i, end:data[i].siblings[j].ind};
+            }
+        }
+        return undefined;
     }
 
     $scope.procClick = function(event) {
@@ -207,6 +230,29 @@ app.controller('CanvasCtrl', function($scope) {
             context.clearRect(0, 0, canvas.width, canvas.height);
             draw($scope.data, $scope.path);
         }
+        else {
+            var rode = rodeClicked($scope.data, x, y);
+            if (rode) {
+                for(var i=0; i<$scope.data[rode.start].siblings.length; i++) {
+                    if ($scope.data[rode.start].siblings[i].ind == rode.end) {
+                        $scope.data[rode.start].siblings[i].type = $scope.road.type; 
+                    }
+                }
+                for(var i=0; i<$scope.data[rode.end].siblings.length; i++) {
+                    if ($scope.data[rode.end].siblings[i].ind == rode.start) {
+                        $scope.data[rode.end].siblings[i].type = $scope.road.type; 
+                    }
+                }
+                if ((start >= 0) && (end >= 0)) {
+                    console.log(start);
+                    console.log(end);
+                    $scope.path = findPath($scope.data, start, end);
+                    
+                }
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                draw($scope.data, $scope.path);
+            }
+        }
     }
 
     connect(0, 1, asphalt);
@@ -216,7 +262,7 @@ app.controller('CanvasCtrl', function($scope) {
     connect(2, 7, asphalt);
     connect(7, 5, asphalt);
     connect(1, 6, asphalt);
-    connect(6, 7, asphalt);
+    connect(6, 7, dirt);
     connect(3, 4, asphalt);
     connect(4, 10, asphalt);
     connect(2, 9, asphalt);

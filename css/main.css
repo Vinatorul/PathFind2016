@@ -8,5 +8,14 @@
 }
 
 #canvas-holder {
-	background: #f7f7c1;
+    background: #f7f7c1;
+}
+
+.radio input {
+    height: 2rem;
+    width: 2rem;
+}
+
+.radio label {
+    font-size: 2rem;
 }

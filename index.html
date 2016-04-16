@@ -22,15 +22,30 @@
             <canvas id="canvas" ng-click="procClick($event)"></canvas>
           </div>
         </div>
-        <div class="large-3 columns text-center">
+        <div class="large-3 columns">
           <div class="panel">
-            <form name="params">
-              <input type="radio" ng-model="param.type" value="1">Set start (blue color)<br/>
-              <input type="radio" ng-model="param.type" value="2">Set end (green color)<br/>
+            <h2>Configuration</h2>
+            <form name="params">             
+              <div class="radio">
+                <label><input type="radio" ng-model="param.type" value="1">Set start (blue)</label>
+              </div>
+              <div class="radio">
+                <label><input type="radio" ng-model="param.type" value="2">Set end (green)</label>
+              </div>
             </form>
-            <div>
-              <p><img src="assets/Link.png"/></p>
-            </div>
+            <hr/>
+            <form name="road-type">
+
+              <div class="radio">
+                <label><input type="radio" ng-model="road.type" value="1">Set asphalt roads</label>
+              </div>
+              <div class="radio">
+                <label><input type="radio" ng-model="road.type" value="2">Set dirt roads</label>
+              </div>
+            </form>
+          </div>
+          <div class="text-center">
+            <p><img src="assets/Link.png"/></p>
           </div>
         </div>
       </div>
