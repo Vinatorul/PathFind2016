@@ -13,18 +13,23 @@
   <body> 
     <a href="https://github.com/Vinatorul/Pathfind2016"><img id="forkme" class="show-for-large-up" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/githuab/ribbons/forkme_right_darkblue_121621.png"></a> 
     <div ng-app="pathFind2016" ng-controller="CanvasCtrl">  
-      <div class="panel callout large">
+      <div class="panel callout">
         <div class="row text-center">
-          <h1>Welcome</h1>
+          <h1>USAGE OF GRAPH THEORY IN PATHFINDING ON THE PLANE</h1>
         </div>
       </div>
       <div class="row">
-        <div id="canvas-holder" class = "panel" style="height:500px">
+        <div id="canvas-holder" class = "columns panel large-9 huge-9" style="height:500px">
             <canvas id="canvas" ng-click="procClick($event)"></canvas>
-          </div>
         </div>
+        <div class="columns text-center large-3 huge-3 show-for-large-up">
+          <p><img src="assets/Link.png"/></p>
+          <p>Check online on <a href="http://vinatorul.github.io/PathFind2016/">vinatorul.github.io/PathFind2016</a></p>
+        </div>
+      </div>
+        
       <div class="row panel">
-        <div class="columns large-5 medium-5 huge-5">
+        <div class="columns large-6 medium-6 huge-6">
           <h3>Set way point</h3>
           <div class="button-group round">
             <a class="button" ng-model="paramType" btn-radio="1">Start</a>
@@ -40,7 +45,7 @@
             <a class="button" ng-model="road.type" btn-radio="3">Closed road</a>
           </div> 
         </div>
-        <div class="columns large-5 medium-5 huge-5">
+        <div class="columns large-6 medium-6 huge-6">
           <h3>Asphalt coefficient</h3>
           <range-slider ng-model="asphaltCoef" placeholder="Asphalt coefficient" not-less="1" not-more="100" display-target="handle" initial="1" formatter="asphaltCoefCB">
           </range-slider>
@@ -50,14 +55,7 @@
           <h3>Closed road coefficient</h3>
           <range-slider ng-model="closedCoef" placeholder="Closed road coefficient" not-less="1" not-more="100" display-target="handle" initial="100" formatter="closedCoefCB">
           </range-slider>
-        </div>
-        <div class="columns text-center large-2 medium-2 huge-2">
-          <p><img src="assets/Link.png"/></p>
-        </div>
-      </div>
-      <div class="row text-center">
-        
-        <h3>Check online on <a href="http://vinatorul.github.io/PathFind2016/">vinatorul.github.io/PathFind2016</a></h3>
+        </div>        
       </div>
     </div>
   </body>
