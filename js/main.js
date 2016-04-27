@@ -39,6 +39,23 @@ app.controller('CanvasCtrl', function($scope) {
         new Node(275, 95),
         new Node(274, 45),
         new Node(350, 260),
+        new Node(550, 260),
+        new Node(430, 100),
+        new Node(600, 350),
+        new Node(630, 150),
+        new Node(630, 40),
+        new Node(570, 70),
+        new Node(470, 200),
+        new Node(20, 350),
+        new Node(190, 360),
+        new Node(100, 355),
+        new Node(350, 370),
+        new Node(360, 105),       
+        new Node(490, 360),      
+        new Node(480, 265),
+        new Node(680, 100),
+        new Node(530, 150),
+        new Node(630, 270),
     ];
 
     $scope.path = [];
@@ -207,9 +224,10 @@ app.controller('CanvasCtrl', function($scope) {
             for(var i=0; i<data.length; i++) {
                 if ((data[i].x - 15 < x) && (data[i].x + 15 > x) &&
                     (data[i].y - 15 < y) && (data[i].y + 15 > y)) {
+                    console.log(i);
                     return i;
                 }
-            }
+            }            
             return -1;
         }
 
@@ -305,22 +323,50 @@ app.controller('CanvasCtrl', function($scope) {
     connect(0, 1, asphalt);
     connect(1, 2, asphalt);
     connect(1, 3, asphalt);
-    connect(2, 4, dirt);
+    connect(2, 4, asphalt);
     connect(2, 7, asphalt);
     connect(7, 5, asphalt);
     connect(1, 6, asphalt);
-    connect(6, 7, dirt);
+    connect(6, 7, asphalt);
     connect(3, 4, asphalt);
     connect(4, 10, asphalt);
-    connect(2, 9, asphalt);
+    connect(2, 9, dirt);
     connect(8, 10, asphalt);
     connect(7, 8, asphalt);
     connect(10, 11, asphalt);
     connect(8, 12, asphalt);
+    connect(0, 20, dirt);
+    connect(22, 20, asphalt);    
+    connect(22, 21, asphalt);
+    connect(6, 22, asphalt);
+    connect(22, 21, asphalt);
+    connect(5, 21, asphalt);  
+    connect(23, 21, closed);   
+    connect(23, 12, asphalt);      
+    connect(24, 10, closed);     
+    connect(24, 14, asphalt);     
+    connect(24, 12, asphalt);   
+    connect(23, 25, asphalt);   
+    connect(26, 12, asphalt);
+    connect(26, 25, asphalt);
+    connect(26, 19, dirt);
+    connect(26, 13, asphalt);
+    connect(15, 13, asphalt);
+    connect(15, 25, dirt);
+    connect(14, 18, asphalt);
+    connect(13, 16, asphalt);
+    connect(18, 16, asphalt);
+    connect(18, 17, dirt);
+    connect(27, 17, dirt);
+    connect(27, 16, asphalt);
+    connect(19, 28, dirt);
+    connect(18, 28, dirt);
+    connect(13, 29, asphalt);
+    connect(15, 29, dirt);
 
     context.globalAlpha = 1.0;
     context.beginPath();
-    canvas.width = 400;
+    canvas.width = 700;
     canvas.height = 400;
     updateCanvas();
 });
